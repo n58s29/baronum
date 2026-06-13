@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baromètre Numérique — FAN Centre-Ouest</title>
+<style>
+/* ============ CHARTE FAN / eSNCF Solutions — Avenir 300/400/500, zéro bordure, aplats tonaux ============ */
+@font-face { font-family:'Avenir'; src:url('https://github.com/SNCFdevelopers/wcs/raw/refs/heads/develop/src/assets/fonts/avenir-book.woff') format('woff'); font-weight:300; font-display:swap; }
+@font-face { font-family:'Avenir'; src:url('https://github.com/SNCFdevelopers/wcs/raw/refs/heads/develop/src/assets/fonts/avenir-medium.woff') format('woff'); font-weight:500; font-display:swap; }
+@font-face { font-family:'Avenir'; src:url('https://github.com/SNCFdevelopers/wcs/raw/refs/heads/develop/src/assets/fonts/avenir-heavy.woff') format('woff'); font-weight:700; font-display:swap; }
+@font-face { font-family:'Avenir'; src:url('https://github.com/SNCFdevelopers/wcs/raw/refs/heads/develop/src/assets/fonts/avenir-black.woff') format('woff'); font-weight:900; font-display:swap; }
+
+:root {
+  --nuit:#00205B;        /* primary eSNCF Solutions */
+  --nuit-2:#1E173C;      /* violet profond — titres */
+  --or:#F3BA00;          /* accent principal (or vif) */
+  --or-doux:#E5CF85;
+  --ciel:#A4C8E1;
+  --teal:#00A984;
+  --rouge:#D52B1E;
+  --cobalt:#264FC4;      /* accent éditorial — barres de carte */
+  --bleu:#0088CE;        /* accent éditorial — emphase serif */
+  --rouge-vif:#E1004A;
+  --fond:#F4F5F6;        /* surface page (charte atelier) */
+  --fond-2:#E8EEF6;      /* aplat tonal secondaire */
+  --nuit-tint:#EAF0FA;
+  --or-tint:#FBF3D9;
+  --bleu-light:#EAF2F9;
+  --txt:#1E173C;
+  --txt-2:#4d4f53;
+  --txt-3:#747678;
+  --blanc:#ffffff;
+  --border-soft:rgba(116,119,128,0.15);
+  --shadow-card:0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,32,91,.06);
+  --shadow-card-hover:0 2px 4px rgba(0,0,0,.05), 0 16px 40px rgba(0,32,91,.10);
+  --font:'Avenir',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --serif:Georgia,'Times New Roman',serif;
+  --r:10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:var(--font); font-weight:300; color:var(--txt); background:var(--fond); line-height:1.45; font-size:17px; -webkit-font-smoothing:antialiased; }
+b, strong { font-weight:700; }
+svg { display:block; }
+em.serif { font-style:italic; font-weight:500; font-family:var(--serif); color:var(--bleu); }
+
+/* ===== TOPBAR (logo SNCF mini + bouton info) ===== */
+.topbar { max-width:740px; margin:0 auto; padding:16px 20px 4px; display:flex; align-items:center; justify-content:space-between; gap:14px; }
+.topbar-logo { display:flex; align-items:center; gap:12px; }
+.topbar-logo-img { height:26px; width:auto; display:block; }
+.topbar-logo-fallback { height:22px; padding:0 7px; background:var(--rouge-vif); color:#fff; display:none; align-items:center; justify-content:center; font-weight:900; font-size:11px; border-radius:3px; }
+.topbar-logo-sep { width:1px; height:22px; background:rgba(116,119,128,0.25); }
+.topbar-fan { font-size:10.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--txt-3); line-height:1.25; }
+.info-btn { display:inline-flex; align-items:center; gap:7px; padding:7px 14px 7px 11px; border:1px solid var(--border-soft); border-radius:999px; background:var(--blanc); color:var(--nuit); font-family:var(--font); font-size:12.5px; font-weight:700; letter-spacing:0.02em; cursor:pointer; transition:background .15s, box-shadow .15s; }
+.info-btn:hover { background:var(--bleu-light); box-shadow:var(--shadow-card); }
+.info-btn svg { width:16px; height:16px; fill:none; stroke:var(--cobalt); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+/* ===== MODALE INFO ===== */
+.modal-overlay { position:fixed; inset:0; z-index:1000; background:rgba(30,23,60,.55); display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(2px); animation:fade .2s ease; }
+.modal { position:relative; background:var(--blanc); border-radius:14px; box-shadow:var(--shadow-card-hover); max-width:560px; width:100%; max-height:88vh; overflow-y:auto; padding:40px 38px 34px; }
+.modal::before { content:""; position:absolute; top:0; left:38px; width:64px; height:4px; background:var(--cobalt); }
+.modal-eyebrow { font-size:12px; font-weight:900; letter-spacing:0.14em; text-transform:uppercase; color:var(--bleu); margin-bottom:10px; }
+.modal h2 { font-weight:900; font-size:27px; letter-spacing:-0.015em; color:var(--nuit); margin-bottom:6px; }
+.modal h3 { font-weight:700; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; color:var(--txt-3); margin-top:22px; margin-bottom:4px; }
+.modal p { font-size:15px; color:var(--txt-2); line-height:1.6; }
+.modal-close { position:absolute; top:16px; right:16px; width:34px; height:34px; border:none; border-radius:50%; background:var(--fond); color:var(--txt-2); font-size:22px; line-height:1; cursor:pointer; transition:background .15s; }
+.modal-close:hover { background:var(--fond-2); }
+
+/* ---------- structure ---------- */
+.wrap { max-width:740px; margin:0 auto; padding:0 20px 80px; }
+header.bandeau { position:relative; overflow:hidden; background:var(--nuit); color:var(--blanc); padding:30px 20px 34px; }
+header.bandeau .inner { position:relative; max-width:740px; margin:0 auto; }
+header.bandeau .inner::before { content:""; position:absolute; top:-30px; left:0; width:64px; height:4px; background:var(--or); }
+.surtitre { font-size:11.5px; letter-spacing:2.2px; text-transform:uppercase; color:var(--or); font-weight:900; }
+header.bandeau h1 { font-weight:900; font-size:clamp(28px,6vw,38px); line-height:1.05; letter-spacing:-0.02em; margin-top:8px; }
+header.bandeau h1 em { font-style:italic; font-weight:500; font-family:var(--serif); color:var(--or); }
+header.bandeau p { color:var(--ciel); margin-top:10px; font-size:15px; font-weight:400; }
+
+.carte { position:relative; overflow:hidden; background:var(--blanc); border-radius:var(--r); padding:30px 28px 28px; margin-top:20px; box-shadow:var(--shadow-card); transition:box-shadow .2s ease; }
+.carte::before { content:""; position:absolute; top:0; left:0; width:56px; height:4px; background:var(--cobalt); }
+.carte:hover { box-shadow:var(--shadow-card-hover); }
+.carte-tonale { background:var(--nuit-tint); border-radius:var(--r); padding:22px 24px; margin-top:18px; }
+.eyebrow { display:block; font-size:12px; font-weight:900; letter-spacing:0.13em; text-transform:uppercase; color:var(--bleu); margin-bottom:8px; }
+h2 { font-weight:900; font-size:23px; line-height:1.12; letter-spacing:-0.015em; color:var(--nuit); }
+h2 em { font-style:italic; font-weight:500; font-family:var(--serif); color:var(--bleu); }
+h3 { font-weight:700; font-size:17px; color:var(--nuit-2); }
+.hidden { display:none !important; }
+
+/* ---------- intro ---------- */
+.intro-grid { display:grid; gap:16px; margin-top:18px; }
+label.champ { display:block; font-size:13px; font-weight:500; color:var(--txt-2); text-transform:uppercase; letter-spacing:1px; }
+select, input[type=text] { width:100%; margin-top:6px; padding:13px 14px; border:none; border-radius:10px; background:var(--fond-2); font-family:var(--font); font-size:16px; font-weight:300; color:var(--txt); outline:none; appearance:none; }
+select:focus, input[type=text]:focus { background:var(--nuit-tint); box-shadow:0 0 0 2px var(--nuit) inset; }
+.pills { display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; }
+.pill { padding:10px 18px; border-radius:99px; background:var(--fond-2); cursor:pointer; font-size:15px; font-weight:500; color:var(--txt-2); transition:all .15s; user-select:none; }
+.pill:hover { background:var(--nuit-tint); }
+.pill.actif { background:var(--nuit); color:var(--blanc); }
+
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 26px; border:none; border-radius:8px; background:var(--cobalt); color:var(--blanc); font-family:var(--font); font-size:16px; font-weight:700; cursor:pointer; transition:background .15s, transform .1s; text-decoration:none; }
+.btn:hover { background:var(--nuit); }
+.btn:active { transform:scale(.98); }
+.btn-or { background:var(--or); color:var(--nuit-2); font-weight:900; }
+.btn-or:hover { background:#FFD133; }
+.btn-ghost { background:var(--bleu-light); color:var(--nuit); }
+.btn-ghost:hover { background:var(--ciel); }
+.btn-row { display:flex; gap:12px; margin-top:26px; flex-wrap:wrap; }
+
+.points-cles { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:20px; }
+.point { background:var(--fond-2); border-radius:10px; padding:14px; text-align:center; }
+.point .gros { font-size:24px; font-weight:700; color:var(--nuit); }
+.point .petit { font-size:12.5px; color:var(--txt-3); margin-top:2px; }
+@media (max-width:560px){ .points-cles { grid-template-columns:1fr; } }
+
+/* ---------- aperçu des 6 dimensions (intro) ---------- */
+.dims-apercu { display:flex; gap:10px; justify-content:space-between; margin-top:20px; }
+.dim-chip { flex:1; text-align:center; }
+.dim-chip .rond { width:44px; height:44px; margin:0 auto; border-radius:50%; background:var(--fond-2); display:flex; align-items:center; justify-content:center; }
+.dim-chip .rond svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.dim-chip .lib { font-size:11px; color:var(--txt-3); margin-top:6px; font-weight:500; }
+@media (max-width:560px){ .dim-chip .lib { display:none; } }
+
+/* ============================================================
+   CONSTELLATION — progression non-linéaire, sans compteur
+   ============================================================ */
+.constellation-zone { margin-top:26px; }
+.constellation-svg { width:100%; height:auto; }
+.cn-edge { stroke:#D7E0EE; stroke-width:1.5; transition:stroke .5s ease; }
+.cn-edge.on { stroke:var(--or-doux); }
+.cn-node-ring { fill:none; stroke:var(--fond-2); stroke-width:3; }
+.cn-node-prog { fill:none; stroke:var(--or); stroke-width:3; stroke-linecap:round; transition:stroke-dashoffset .45s ease; transform:rotate(-90deg); transform-origin:center; }
+.cn-node-disc { transition:fill .45s ease; }
+.cn-ico { fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:stroke .45s ease; }
+.cn-pulse { transform-origin:center; }
+.constellation-cap { text-align:center; margin-top:10px; min-height:20px; }
+.constellation-cap .quoi { font-size:13.5px; font-weight:500; color:var(--nuit-2); }
+.constellation-cap .quoi span { color:var(--txt-3); font-weight:300; }
+@keyframes cnpulse { 0%,100% { opacity:.35; r:26px; } 50% { opacity:0; r:30px; } }
+
+/* ---------- quiz ---------- */
+.axe-badge { display:inline-flex; align-items:center; gap:8px; padding:6px 16px 6px 8px; border-radius:99px; background:var(--or-tint); color:#8a6a00; font-size:13px; font-weight:500; letter-spacing:.3px; }
+.axe-badge .pic { width:24px; height:24px; border-radius:50%; background:var(--blanc); display:flex; align-items:center; justify-content:center; }
+.axe-badge .pic svg { width:15px; height:15px; fill:none; stroke:#8a6a00; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.question-txt { font-size:23px; font-weight:500; color:var(--nuit-2); margin-top:14px; line-height:1.25; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:22px; }
+.option { background:var(--fond-2); border-radius:12px; padding:18px 16px; cursor:pointer; transition:transform .12s, background .12s; display:flex; flex-direction:column; gap:12px; align-items:flex-start; }
+.option:hover { background:var(--nuit-tint); transform:translateY(-3px); }
+.option:focus-visible { outline:none; box-shadow:0 0 0 2px var(--nuit) inset; }
+.option .pic { width:46px; height:46px; border-radius:12px; background:var(--blanc); display:flex; align-items:center; justify-content:center; flex:none; }
+.option .pic svg { width:26px; height:26px; fill:none; stroke:var(--nuit); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; transition:stroke .12s; }
+.option:hover .pic { background:var(--nuit); }
+.option:hover .pic svg { stroke:var(--blanc); }
+.option .lib { font-size:15.5px; font-weight:500; color:var(--txt-2); line-height:1.3; }
+@media (max-width:560px){
+  .options { grid-template-columns:1fr; }
+  .option { flex-direction:row; align-items:center; padding:14px 16px; }
+}
+
+/* ---------- résultats ---------- */
+.score-hero { background:var(--nuit); border-radius:var(--r); padding:32px 28px; margin-top:24px; color:var(--blanc); text-align:center; }
+.score-hero .niveau { font-size:13px; letter-spacing:2.5px; text-transform:uppercase; color:var(--ciel); font-weight:500; }
+.persona-nom { font-size:32px; font-weight:700; color:var(--or); margin-top:8px; }
+.persona-desc { color:var(--ciel); font-size:15.5px; max-width:440px; margin:10px auto 0; }
+.thermo { margin:26px auto 4px; max-width:440px; }
+.thermo-rail { height:14px; border-radius:99px; background:rgba(255,255,255,.15); position:relative; overflow:visible; }
+.thermo-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--ciel),var(--or)); width:0%; transition:width 1s ease; }
+.thermo-val { position:absolute; top:-38px; transform:translateX(-50%); background:var(--or); color:var(--nuit-2); font-weight:700; font-size:16px; padding:4px 12px; border-radius:99px; transition:left 1s ease; white-space:nowrap; }
+.thermo-grad { display:flex; justify-content:space-between; font-size:11px; color:rgba(255,255,255,.5); margin-top:8px; letter-spacing:1px; text-transform:uppercase; font-weight:500; }
+
+.radar-zone { display:flex; justify-content:center; margin-top:8px; }
+.axes-detail { display:grid; gap:10px; margin-top:18px; }
+.axe-ligne { display:grid; grid-template-columns:34px 1fr 110px 56px; gap:14px; align-items:center; background:var(--fond-2); border-radius:10px; padding:13px 16px; }
+.axe-ligne .ico-axe { width:30px; height:30px; border-radius:50%; background:var(--blanc); display:flex; align-items:center; justify-content:center; }
+.axe-ligne .ico-axe svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.axe-ligne .nom { font-size:15px; font-weight:500; color:var(--nuit-2); }
+.axe-ligne .nom small { display:block; font-weight:300; color:var(--txt-3); font-size:12.5px; }
+.mini-rail { height:8px; border-radius:99px; background:var(--blanc); overflow:hidden; }
+.mini-fill { height:100%; border-radius:99px; }
+.axe-ligne .val { font-weight:700; font-size:16px; text-align:right; color:var(--nuit); }
+@media (max-width:560px){ .axe-ligne { grid-template-columns:30px 1fr 60px 40px; gap:10px; } .axe-ligne .nom small { display:none; } }
+
+.reco { background:var(--or-tint); border-radius:10px; padding:18px 20px; margin-top:12px; }
+.reco .tag { font-size:11.5px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:#8a6a00; }
+.reco h3 { margin-top:4px; }
+.reco p { font-size:15px; color:var(--txt-2); margin-top:4px; }
+.reco .meta { font-size:13.5px; color:var(--txt-3); margin-top:8px; font-weight:500; }
+.reco a.lien { display:inline-block; margin-top:10px; color:var(--nuit); font-weight:500; font-size:14.5px; text-decoration:none; background:var(--blanc); padding:8px 16px; border-radius:99px; }
+.reco a.lien:hover { background:var(--nuit); color:var(--blanc); }
+
+footer { text-align:center; margin-top:50px; font-size:12.5px; color:var(--txt-3); }
+.fade { animation:fade .3s ease; }
+@keyframes fade { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-logo">
+    <img class="topbar-logo-img" alt="SNCF"
+         src="https://github.com/SNCFdevelopers/wcs/raw/refs/heads/develop/src/assets/sncf-logo.png"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex';">
+    <span class="topbar-logo-fallback">SNCF</span>
+    <span class="topbar-logo-sep"></span>
+    <span class="topbar-fan">Fabrique de l'Adoption Numérique</span>
+  </div>
+  <button class="info-btn" id="btn-info" aria-haspopup="dialog">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r=".6" fill="currentColor" stroke="none"/></svg>
+    À propos
+  </button>
+</header>
+
+<header class="bandeau">
+  <div class="inner">
+    <div class="surtitre">FAN · e.SNCF Solutions · Territoires Centre-Ouest</div>
+    <h1>Baromètre <em>Numérique</em></h1>
+    <p>Votre thermomètre numérique &amp; IA. 5 minutes, zéro piège.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ================= INTRO ================= -->
+  <section id="screen-intro">
+    <div class="carte fade">
+      <span class="eyebrow">Auto-diagnostic · 6 dimensions</span>
+      <h2>Où en <em>êtes-vous</em>&nbsp;?</h2>
+      <p style="margin-top:10px; color:var(--txt-2);">Des situations du quotidien. Répondez avec ce que vous faites <b>vraiment</b>. Pas de bonne réponse — juste la vôtre.</p>
+      <div class="dims-apercu" id="dims-apercu"></div>
+      <div class="points-cles">
+        <div class="point"><div class="gros">6</div><div class="petit">dimensions, dont l'IA générative</div></div>
+        <div class="point"><div class="gros">~5 min</div><div class="petit">le parcours s'adapte à vous</div></div>
+        <div class="point"><div class="gros">0</div><div class="petit">donnée envoyée — tout reste ici</div></div>
+      </div>
+    </div>
+
+    <div class="carte">
+      <h3>Trois repères, et c'est parti</h3>
+      <div class="intro-grid" style="margin-top:16px;">
+        <div>
+          <label class="champ">Territoire</label>
+          <div class="pills" id="pills-territoire">
+            <span class="pill" data-val="BZH">Bretagne</span>
+            <span class="pill" data-val="PDL">Pays de la Loire</span>
+            <span class="pill" data-val="CVDL">Centre-Val de Loire</span>
+            <span class="pill" data-val="AUTRE">Autre</span>
+          </div>
+        </div>
+        <div>
+          <label class="champ" for="inp-entite">Entité <span style="text-transform:none; letter-spacing:0; font-weight:300;">(facultatif)</span></label>
+          <input type="text" id="inp-entite" placeholder="Ex. : Technicentre, ESV, Direction régionale...">
+        </div>
+        <div>
+          <label class="champ" for="sel-metier">Métier</label>
+          <select id="sel-metier">
+            <option value="">— Choisir —</option>
+            <option>Conduite / Traction</option>
+            <option>Commercial / Escale / Relation client</option>
+            <option>Maintenance / Matériel</option>
+            <option>Infra / Réseau / Circulation</option>
+            <option>Fonctions support (RH, gestion, com...)</option>
+            <option>Management / Direction</option>
+            <option>SI / Numérique</option>
+            <option>Autre</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-or" id="btn-start">C'est parti →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= QUIZ ================= -->
+  <section id="screen-quiz" class="hidden">
+    <div class="constellation-zone">
+      <div id="constellation"></div>
+      <div class="constellation-cap"><div class="quoi" id="cn-cap"></div></div>
+    </div>
+    <div class="carte fade" id="carte-question">
+      <span class="axe-badge" id="q-axe"></span>
+      <div class="question-txt" id="q-texte"></div>
+      <div class="options" id="q-options"></div>
+    </div>
+  </section>
+
+  <!-- ================= RÉSULTATS ================= -->
+  <section id="screen-result" class="hidden">
+
+    <div class="score-hero fade">
+      <div class="niveau">Votre profil numérique</div>
+      <div class="persona-nom" id="res-persona"></div>
+      <div class="persona-desc" id="res-persona-desc"></div>
+      <div class="thermo">
+        <div class="thermo-rail">
+          <div class="thermo-val" id="res-thermo-val" style="left:0%">0</div>
+          <div class="thermo-fill" id="res-thermo-fill"></div>
+        </div>
+        <div class="thermo-grad"><span>Découverte</span><span>Pratique</span><span>Maîtrise</span><span>Éclaireur</span></div>
+      </div>
+    </div>
+
+    <div class="carte">
+      <span class="eyebrow">Profil détaillé</span>
+      <h2>Votre <em>radar</em></h2>
+      <div class="radar-zone" id="res-radar"></div>
+      <div class="axes-detail" id="res-axes"></div>
+    </div>
+
+    <div class="carte">
+      <span class="eyebrow">Recommandations · Catalogue Station C</span>
+      <h2>Vos 3 <em>prochains pas</em></h2>
+      <p style="margin-top:8px; color:var(--txt-2); font-size:15px;">Des formations du catalogue Station C, choisies là où vous gagnerez le plus. L'IA compte double.</p>
+      <div id="res-recos"></div>
+    </div>
+
+    <div class="carte">
+      <span class="eyebrow">Et maintenant</span>
+      <h2>Passez à <em>l'action</em></h2>
+      <p style="margin-top:6px; color:var(--txt-2); font-size:15px;">Votre Chargé d'Adoption Numérique FAN vous aide à transformer ce profil en formations concrètes, sur votre territoire. Un échange, et on cale vos prochains pas.</p>
+      <div class="btn-row">
+        <button class="btn btn-or" id="btn-mail">✉ Je contacte mon Chargé d'Adoption FAN</button>
+        <button class="btn btn-ghost" id="btn-restart">↺ Refaire</button>
+      </div>
+      <p style="margin-top:14px; color:var(--txt-3); font-size:13px;">Le mail s'ouvre <b>pré-rempli</b> avec votre profil et vos repères. Vous relisez et vous gardez la main avant l'envoi — rien n'est transmis automatiquement.</p>
+    </div>
+
+  </section>
+
+  <footer>Baromètre Numérique FAN · e.SNCF Solutions — Usage interne SNCF (C1) · v1.4 · Vos réponses ne quittent pas votre navigateur.</footer>
+</div>
+
+<!-- ================= MODALE À PROPOS ================= -->
+<div class="modal-overlay hidden" id="info-modal" role="dialog" aria-modal="true" aria-label="À propos du Baromètre Numérique">
+  <div class="modal">
+    <button class="modal-close" id="btn-info-close" aria-label="Fermer">&times;</button>
+    <div class="modal-eyebrow">À propos</div>
+    <h2>Le Baromètre <em class="serif">Numérique</em></h2>
+
+    <h3>C'est quoi&nbsp;?</h3>
+    <p>Un auto-diagnostic express de votre maturité numérique, sur 6 dimensions — du socle Microsoft 365 à l'IA générative. Une dizaine de situations concrètes du quotidien, environ 5 minutes. Pas de bonne réponse, pas de jugement : juste un repère.</p>
+
+    <h3>Qui est derrière&nbsp;?</h3>
+    <p>Il est conçu par la <b>FAN — Fabrique de l'Adoption Numérique</b> d'e.SNCF Solutions, pour les territoires Centre-Ouest : Bretagne, Pays de la Loire et Centre-Val de Loire. Votre Chargé d'Adoption Numérique l'utilise lors de ses tournées métiers.</p>
+
+    <h3>À quoi ça sert&nbsp;?</h3>
+    <p>À situer votre niveau, puis à vous orienter vers les bonnes formations du catalogue Station C, adaptées à votre métier. À la fin, vous pouvez contacter directement votre Chargé d'Adoption pour aller plus loin (formations, atelier IAGEN, accompagnement).</p>
+
+    <h3>Et mes données&nbsp;?</h3>
+    <p>Vos réponses ne quittent pas votre navigateur. Rien n'est envoyé ni stocké automatiquement (usage interne SNCF — niveau C1).</p>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ================================================================
+   BIBLIOTHÈQUE DE PICTOS — line icons 24×24, stroke = couleur héritée.
+   Un seul jeu réutilisé partout (dimensions + options). Frugal.
+   ================================================================ */
+const ICONS = {
+  /* dimensions */
+  monitor:   '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  users:     '<circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 6a3 3 0 0 1 0 6"/><path d="M20.5 19a5.5 5.5 0 0 0-4-5.3"/>',
+  bars:      '<path d="M3 21h18"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="7" width="3" height="11" rx="1"/><rect x="16" y="4" width="3" height="14" rx="1"/>',
+  sparkle:   '<path d="M12 3l1.7 4.8L18.5 9.5l-4.8 1.7L12 16l-1.7-4.8L5.5 9.5l4.8-1.7z"/><path d="M18.5 14l.7 1.9 1.9.6-1.9.7-.7 1.8-.7-1.8-1.9-.7 1.9-.6z"/>',
+  shield:    '<path d="M12 3l8 3v5.5c0 4.7-3.4 7.6-8 8.5-4.6-.9-8-3.8-8-8.5V6z"/>',
+  compass:   '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8L8.5 15.5l2.2-4.8z"/>',
+  /* options */
+  printer:   '<path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><rect x="7" y="14" width="10" height="6" rx="1"/><circle cx="17" cy="12" r=".6" fill="currentColor"/>',
+  download:  '<path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
+  cloud:     '<path d="M17 19a4 4 0 0 0 .4-8A5.5 5.5 0 0 0 7 9.5 4 4 0 0 0 7 19z"/><path d="M10 14h5"/>',
+  drive:     '<rect x="6" y="9" width="12" height="12" rx="2"/><path d="M10 9V6a2 2 0 0 1 4 0v3"/><path d="M12 13v3"/>',
+  shuffle:   '<path d="M16 3h5v5"/><path d="M21 3 4 20"/><path d="M16 21h5v-5"/><path d="m15 15 6 6"/><path d="M3 4l6 6"/>',
+  link:      '<path d="M9.5 14.5 14.5 9.5"/><path d="M11 7l1.5-1.5a4 4 0 0 1 5.5 5.5L16.5 12"/><path d="M13 17l-1.5 1.5a4 4 0 0 1-5.5-5.5L7.5 12"/>',
+  layers:    '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 16.5 9 5 9-5"/>',
+  inbox:     '<path d="M4 13h4l1.5 3h5L16 13h4"/><path d="M5 5h14l1 8v6H4v-6z"/>',
+  sort:      '<path d="M4 6h13M4 12h9M4 18h5"/><path d="m15 10 3 3 3-3"/>',
+  gear:      '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M4.5 4.5l2.1 2.1M17.4 17.4l2.1 2.1M2.5 12h3M18.5 12h3M4.5 19.5l2.1-2.1M17.4 6.6l2.1-2.1"/>',
+  chat:      '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.3A8 8 0 1 1 21 12z"/><path d="M9 11h6M9 14h4"/>',
+  phone:     '<path d="M5 4h4l1.5 5-2.5 1.5a12 12 0 0 0 5 5L14 13l5 1.5V19a2 2 0 0 1-2 2A15 15 0 0 1 3 7a2 2 0 0 1 2-3z"/>',
+  envelope:  '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/>',
+  calendar:  '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  poll:      '<path d="M6 21V10M12 21V4M18 21v-7"/><path d="M3 21h18"/>',
+  clipboard: '<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h4"/>',
+  eyeoff:    '<path d="M3 3 21 21"/><path d="M10.6 6.2A9 9 0 0 1 12 6c6 0 9 6 9 6a16 16 0 0 1-2.9 3.6M6.3 6.7A16 16 0 0 0 3 12s3 6 9 6a9 9 0 0 0 2.7-.4"/>',
+  mic:       '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/>',
+  screen:    '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M9 9h6M12 9v4M8 20h8"/>',
+  pen:       '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  table:     '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/>',
+  hand:      '<path d="M18 11V6.5a1.5 1.5 0 0 0-3 0V10M15 10V4.5a1.5 1.5 0 0 0-3 0V10M12 10.5V6a1.5 1.5 0 0 0-3 0v8.5l-1.5-2A1.6 1.6 0 0 0 5 14.7l3 5A5 5 0 0 0 12.5 22h1.5a5 5 0 0 0 5-5v-3.5a1.5 1.5 0 0 0-3 0V11"/>',
+  filter:    '<path d="M3 5h18l-7 8v6l-4-2v-4z"/>',
+  pie:       '<path d="M12 3v9h9"/><path d="M21 12a9 9 0 1 1-9-9"/>',
+  repeat:    '<path d="m17 2 3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="m7 22-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/>',
+  search:    '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.2-4.2"/>',
+  robot:     '<rect x="4" y="8" width="16" height="11" rx="2"/><path d="M12 8V4M9 4h6"/><circle cx="9" cy="13" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.1" fill="currentColor" stroke="none"/><path d="M9.5 16h5"/>',
+  share:     '<circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="m8 11 7.8-4M8 13l7.8 4"/>',
+  target:    '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
+  check:     '<path d="M12 3l8 3v5.5c0 4.7-3.4 7.6-8 8.5-4.6-.9-8-3.8-8-8.5V6z"/><path d="m8.5 12 2.5 2.5 4.5-4.5"/>',
+  question:  '<circle cx="12" cy="12" r="9"/><path d="M9.3 9.2A2.7 2.7 0 0 1 14 11c0 1.7-2 2-2 3.6"/><circle cx="12" cy="17.3" r=".7" fill="currentColor" stroke="none"/>',
+  cursor:    '<path d="M5 3l4.5 16 2.3-6.7L18.5 10z"/>',
+  trash:     '<path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6.5 7l1 13h9l1-13"/>',
+  flag:      '<path d="M5 22V3M5 4h12l-2.3 4L17 12H5"/>',
+  alert:     '<path d="M12 3 2 20h20z"/><path d="M12 10v4.5M12 17.5v.2"/>',
+  key:       '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l2.5 2.5M14 9l2.5 2.5"/>',
+  vault:     '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M12 14.6V18"/>',
+  classify:  '<path d="M3 11V5a2 2 0 0 1 2-2h6l9.5 9.5a1.5 1.5 0 0 1 0 2L13 22a1.5 1.5 0 0 1-2 0L3 14z"/><circle cx="8" cy="8" r="1.4"/>',
+  clock:     '<circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.4 2"/>',
+  flask:     '<path d="M9.5 3h5M11 3v6l-4.6 8a1.8 1.8 0 0 0 1.6 2.8h8a1.8 1.8 0 0 0 1.6-2.8L13 9V3"/><path d="M8 15h8"/>',
+  slash:     '<circle cx="12" cy="12" r="9"/><path d="m6.5 6.5 11 11"/>',
+  headset:   '<path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M20 19a4 4 0 0 1-4 3h-2"/>',
+  wrench:    '<path d="M14.5 5.5a4 4 0 0 0-5.2 5.2l-6 6a1.6 1.6 0 0 0 2.3 2.3l6-6a4 4 0 0 0 5.2-5.2l-2.6 2.6-2-2z"/>',
+  star:      '<path d="m12 3 2.5 6 6.5.5-5 4.2L17.5 20 12 16.5 6.5 20l1.5-6.3-5-4.2 6.5-.5z"/>',
+  eye:       '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>'
+};
+function svgIco(name, cls) {
+  return `<svg viewBox="0 0 24 24" class="${cls||''}" aria-hidden="true">${ICONS[name]||ICONS.question}</svg>`;
+}
+
+/* ================================================================
+   CONFIG — tout se pilote ici : axes, questions, personas, offres.
+   Niveaux de réponse : 1 (découverte) → 4 (éclaireur).
+   Chaque option = [texte, picto] contextuel à la situation.
+   La 1re question de chaque axe est une "porte" : si réponse = 1,
+   les questions suivantes de l'axe sont sautées (parcours adaptatif).
+   ================================================================ */
+const STATIONC = code => `https://stationc-formation.sncf.fr/spa/catalog/search?page[number]=1&filter[$themes][in]=15335427&filter[catalogType][eq]=1&filter[$languages][in]=fr-fr&filter[$keyword][eq]=${encodeURIComponent(code)}&sort=-relevance`;
+
+const CONFIG = {
+  version: "1.3",
+  /* Destinataire du CTA. Adaptez par territoire si besoin. */
+  contact: { nom: "Mathieu Ribourg", role: "Chargé d'Adoption Numérique Territorial — FAN Centre-Ouest", email: "mathieu.ribourg@sncf.fr" },
+  axes: [
+    {
+      id: "m365", label: "Socle M365 & poste de travail", court: "M365", weight: 1, couleur: "#00205B", ic: "monitor",
+      questions: [
+        { t: "Un document à corriger pour demain. Réflexe ?",
+          o: [["Je l'imprime","printer"],
+              ["Je télécharge, je modifie, je renvoie par mail","download"],
+              ["Je modifie en ligne, direct","cloud"],
+              ["On co-rédige à plusieurs, en simultané","users"]] },
+        { t: "Vos fichiers vivent où ?",
+          o: [["Sur mon PC ou une clé USB","drive"],
+              ["Un peu partout — c'est flou","shuffle"],
+              ["OneDrive / SharePoint, partage par lien","link"],
+              ["Espaces d'équipe que je structure","layers"]] },
+        { t: "Votre boîte mail, ce matin ?",
+          o: [["Des centaines de non-lus","inbox"],
+              ["Je trie à la main","sort"],
+              ["Règles de tri automatiques","gear"],
+              ["L'équipe échange ailleurs — Teams, canaux","chat"]] }
+      ]
+    },
+    {
+      id: "collab", label: "Collaboration & travail d'équipe", court: "Collab", weight: 1, couleur: "#0084D4", ic: "users",
+      questions: [
+        { t: "Réunion à caler sur 3 sites. Comment ?",
+          o: [["Coups de fil","phone"],
+              ["Mail avec des dates","envelope"],
+              ["Sondage ou assistant Outlook","calendar"],
+              ["Teams : ordre du jour, notes, CR partagés","clipboard"]] },
+        { t: "En réunion Teams, vous êtes...",
+          o: [["Spectateur, caméra coupée","eyeoff"],
+              ["À l'oral, quand on me sollicite","mic"],
+              ["Chat, réactions, partage d'écran","screen"],
+              ["Animateur : sondages, tableau blanc, sous-groupes","poll"]] },
+        { t: "Le suivi des actions d'équipe ?",
+          o: [["De tête, ou sur papier","pen"],
+              ["Un Excel quelque part","table"],
+              ["Planner ou Lists, partagé","clipboard"],
+              ["Flux automatisé, tableaux de bord","bars"]] }
+      ]
+    },
+    {
+      id: "data", label: "Data & automatisation", court: "Data", weight: 1, couleur: "#00A984", ic: "bars",
+      questions: [
+        { t: "5 000 lignes Excel à analyser.",
+          o: [["Je passe la main","hand"],
+              ["Tris et filtres","filter"],
+              ["Croisés dynamiques, formules, graphiques","pie"],
+              ["Power Query / Power BI","bars"]] },
+        { t: "Une tâche répétitive, 30 min par semaine.",
+          o: [["Je la fais, point","repeat"],
+              ["J'ai cherché une astuce, sans succès","search"],
+              ["Automatisée en partie","gear"],
+              ["Un flux la fait à ma place","robot"]] },
+        { t: "Les chiffres présentés en réunion ?",
+          o: [["Aucune idée d'où ils sortent","question"],
+              ["Excel refait à chaque fois","table"],
+              ["Rapports partagés, à jour","share"],
+              ["Tableaux de bord connectés aux sources","bars"]] }
+      ]
+    },
+    {
+      id: "ia", label: "IA générative", court: "IAgen", weight: 2, couleur: "#F3BA00", ic: "sparkle",
+      questions: [
+        { t: "L'IA générative et vous ?",
+          o: [["Jamais essayé","slash"],
+              ["Testé par curiosité","flask"],
+              ["Chaque semaine, pour des tâches réelles","sparkle"],
+              ["Au quotidien — et j'embarque des collègues","share"]] },
+        { t: "Un compte-rendu à rédiger depuis vos notes ?",
+          o: [["Tout à la main","pen"],
+              ["« Fais-moi un CR » — et je prends tel quel","robot"],
+              ["Contexte + format attendu, puis relecture","target"],
+              ["Prompt type, vérification systématique","check"]] },
+        { t: "Les règles d'usage de l'IA (confidentialité) ?",
+          o: [["Quelles règles ?","question"],
+              ["Ça existe, paraît-il","eye"],
+              ["Je sais ce que je peux soumettre ou non","check"],
+              ["Je les connais — et je les diffuse","share"]] }
+      ]
+    },
+    {
+      id: "secu", label: "Sécurité numérique", court: "Sécu", weight: 1, couleur: "#D52B1E", ic: "shield",
+      questions: [
+        { t: "Mail suspect : « régularisez votre compte ».",
+          o: [["Je clique, pour voir","cursor"],
+              ["Je supprime, dans le doute","trash"],
+              ["Je vérifie l'expéditeur et je signale","flag"],
+              ["Je signale — et j'alerte l'équipe","alert"]] },
+        { t: "Vos mots de passe ?",
+          o: [["Le même partout","key"],
+              ["Quelques variantes, notées quelque part","pen"],
+              ["Robustes + double authentification","check"],
+              ["Gestionnaire + double authentification partout","vault"]] },
+        { t: "Une donnée interne à envoyer à un externe ?",
+          o: [["Par mail, comme d'habitude","envelope"],
+              ["Je demande à mon manager","question"],
+              ["Je vérifie la classification (C0, C1, C2...)","classify"],
+              ["Je connais le référentiel — et je conseille","share"]] }
+      ]
+    },
+    {
+      id: "culture", label: "Culture & veille numérique", court: "Culture", weight: 1, couleur: "#6558B1", ic: "compass",
+      questions: [
+        { t: "Un nouvel outil débarque.",
+          o: [["J'attends la formation","clock"],
+              ["Si on me montre, j'y vais","eye"],
+              ["Je teste tout seul","flask"],
+              ["J'explore — et je partage","share"]] },
+        { t: "Votre veille numérique ?",
+          o: [["Aucune","slash"],
+              ["Par les collègues","users"],
+              ["Newsletters, LinkedIn, communautés","compass"],
+              ["Active — et je la redistribue","share"]] },
+        { t: "Un collègue bloque sur un outil.",
+          o: [["Moi aussi","question"],
+              ["Direction l'assistance","headset"],
+              ["Je dépanne souvent","wrench"],
+              ["On vient me voir spontanément","star"]] }
+      ]
+    }
+  ],
+
+  personas: [
+    { min: 0,  nom: "Curieux du numérique",  desc: "Tout est devant vous. Chaque pas se verra tout de suite dans votre quotidien." },
+    { min: 30, nom: "Explorateur prudent",   desc: "Les bases sont là. Quelques déclics bien choisis vont vous libérer du temps." },
+    { min: 50, nom: "Pratiquant connecté",   desc: "Le numérique fait partie de votre quotidien. Prochaine étape : automatisation et IA." },
+    { min: 70, nom: "Pilote augmenté",       desc: "Vous tirez vraiment parti des outils, IA comprise. Reste à embarquer le collectif." },
+    { min: 85, nom: "Éclaireur numérique",   desc: "Profil rare. Votre exemple vaut dix formations — parlons rôle d'ambassadeur." }
+  ],
+
+  /* Offres par axe : [score < 50, score 50-74] — catalogue Station C, thème Numérique pour tous. */
+  offres: {
+    m365:    [ { nom: "Atelier prise en main du poste de travail Windows 11", desc: "Redécouvrir son poste, par la pratique. Sessions à la demande.", code: "SITNPCW11", meta: "3,5 h · Présentiel · 140 €" },
+               { nom: "SharePoint Débutant (Niv1) : gérer son site", desc: "Les bases pour manipuler l'outil et créer ses pages.", code: "SIDISPC1", meta: "1 j · Présentiel ou distanciel · 430 €" } ],
+    collab:  [ { nom: "Découverte des outils collaboratifs Microsoft 365", desc: "Le tour d'horizon express : Teams, OneDrive, SharePoint.", code: "SIELDOCM", meta: "30 min · E-learning · Libre-service" },
+               { nom: "SharePoint Avancé (Niv2) : améliorer, administrer son site", desc: "Structurer l'espace de votre équipe et le faire vivre.", code: "SIDISPC2", meta: "1 j · Présentiel ou distanciel · 450 €" } ],
+    data:    [ { nom: "Atelier données & Excel — École Numérique", desc: "Sessions sur mesure, à la demande : ecolenumerique@sncf.fr.", code: null, meta: "Sur demande · Présentiel" },
+               { nom: "Power BI Expert", desc: "M, DAX, mesures : des rapports qui se mettent à jour seuls.", code: "SIDIPBI3", meta: "3 j · Présentiel ou distanciel · 1 110 €" } ],
+    ia:      [ { nom: "Exploiter l'IA générative au quotidien (parcours 1-2-3)", desc: "Fonctionnement, fondamentaux du prompt, éthique et sécurité.", code: "SIELIAGEN1", meta: "3 × 1 h · E-learning · Libre-service" },
+               { nom: "Maîtriser l'IA générative — Ateliers cas d'usage", desc: "Construire ses prompts sur de vrais cas métier, en supervisé.", code: "SIIAUSECAS", meta: "3,5 h · Présentiel · 195 €" } ],
+    secu:    [ { nom: "Les 10 CybeRéflexes", desc: "Se protéger et protéger l'entreprise : le b.a.-ba.", code: "SIEL10CR", meta: "20 min · E-learning · Libre-service" },
+               { nom: "Tous Cyber Champions", desc: "Phishing, smishing, deepfake : 4 épreuves pour s'entraîner.", code: "SIELTCYC2", meta: "25 min · E-learning · Libre-service" } ],
+    culture: [ { nom: "Tous Numériques", desc: "Le parcours d'acculturation conçu par et pour les agents SNCF.", code: "SIELTNGEN1", meta: "À votre rythme · E-learning · 25 €" },
+               { nom: "Communauté numérique de votre territoire", desc: "Démos, entraide, nouveautés — avec votre Chargé d'Adoption.", code: null, meta: "Gratuit · Au fil de l'eau" } ]
+  },
+
+  /* Si tous les axes sont ≥ 75, on propose ça. */
+  offreEclaireur: { nom: "Devenez ambassadeur numérique", desc: "Rejoignez le réseau et co-animez les ateliers IAGEN de votre territoire.", code: null, meta: "Contactez votre Chargé d'Adoption Numérique" }
+};
+
+/* ================================================================
+   ÉTAT & PARCOURS ADAPTATIF
+   ================================================================ */
+let state = null;
+
+function nouveauParcours() {
+  return {
+    meta: { territoire: null, entite: "", metier: "" },
+    queue: CONFIG.axes.flatMap(a => a.questions.map((q, i) => ({ axe: a.id, qi: i }))),
+    pos: 0,
+    reponses: {} // { axeId: [niveaux 1-4 répondus] }
+  };
+}
+
+const $ = id => document.getElementById(id);
+const axeById = id => CONFIG.axes.find(a => a.id === id);
+
+/* ---------- aperçu des 6 dimensions sur l'intro ---------- */
+(function apercu() {
+  $('dims-apercu').innerHTML = CONFIG.axes.map(a =>
+    `<div class="dim-chip"><div class="rond" style="color:${a.couleur}">${svgIco(a.ic)}</div><div class="lib">${a.court}</div></div>`
+  ).join('');
+})();
+
+/* ---------- modale À propos ---------- */
+(function infoModal() {
+  const modal = $('info-modal');
+  const ouvrir = () => { modal.classList.remove('hidden'); };
+  const fermer = () => { modal.classList.add('hidden'); };
+  $('btn-info').addEventListener('click', ouvrir);
+  $('btn-info-close').addEventListener('click', fermer);
+  modal.addEventListener('click', e => { if (e.target === modal) fermer(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) fermer(); });
+})();
+
+/* ---------- intro ---------- */
+document.querySelectorAll('#pills-territoire .pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('#pills-territoire .pill').forEach(x => x.classList.remove('actif'));
+    p.classList.add('actif');
+  });
+});
+
+$('btn-start').addEventListener('click', () => {
+  state = nouveauParcours();
+  const pill = document.querySelector('#pills-territoire .pill.actif');
+  state.meta.territoire = pill ? pill.dataset.val : null;
+  state.meta.entite = $('inp-entite').value.trim();
+  state.meta.metier = $('sel-metier').value;
+  $('screen-intro').classList.add('hidden');
+  $('screen-result').classList.add('hidden');
+  $('screen-quiz').classList.remove('hidden');
+  construireConstellation();
+  afficherQuestion();
+  window.scrollTo({ top: 0 });
+});
+
+/* ================================================================
+   CONSTELLATION — progression non-linéaire, sans compteur.
+   6 nœuds-dimensions disposés organiquement ; ils s'allument à
+   mesure qu'un axe est complété ; le nœud courant pulse et porte
+   un anneau de micro-progression.
+   ================================================================ */
+const CN_POS = [ [40,74],[96,32],[156,80],[214,34],[276,72],[326,38] ]; // x,y des 6 nœuds
+const CN_EDGES = [ [0,1],[1,2],[2,3],[3,4],[4,5],[0,2],[3,5] ];
+const CN_R = 17;          // rayon disque
+const CN_RING = 22;       // rayon anneau de progression
+const CN_CIRC = 2 * Math.PI * CN_RING;
+
+function construireConstellation() {
+  const W = 366, H = 108;
+  const edges = CN_EDGES.map(([a,b]) =>
+    `<line class="cn-edge" data-edge="${a}-${b}" x1="${CN_POS[a][0]}" y1="${CN_POS[a][1]}" x2="${CN_POS[b][0]}" y2="${CN_POS[b][1]}"/>`
+  ).join('');
+
+  const nodes = CONFIG.axes.map((a, i) => {
+    const [x, y] = CN_POS[i];
+    return `<g class="cn-node" data-axe="${a.id}" transform="translate(${x},${y})">
+      <circle class="cn-pulse" data-i="${i}" r="${CN_R}" fill="${a.couleur}" opacity="0"></circle>
+      <circle class="cn-node-ring" r="${CN_RING}"></circle>
+      <circle class="cn-node-prog" data-i="${i}" r="${CN_RING}" stroke-dasharray="${CN_CIRC}" stroke-dashoffset="${CN_CIRC}"></circle>
+      <circle class="cn-node-disc" data-i="${i}" r="${CN_R}" fill="#E8EEF6"></circle>
+      <g class="cn-ico" data-i="${i}" transform="translate(-11,-11) scale(0.92)" stroke="#9BA8BD">${ICONS[a.ic]}</g>
+    </g>`;
+  }).join('');
+
+  $('constellation').innerHTML =
+    `<svg class="constellation-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Progression par dimension">
+       ${edges}${nodes}
+     </svg>`;
+}
+
+function majConstellation() {
+  const currentAxe = state.pos < state.queue.length ? state.queue[state.pos].axe : null;
+  const etat = {};
+  CONFIG.axes.forEach(a => {
+    const total = state.queue.filter(x => x.axe === a.id).length;
+    const rep = (state.reponses[a.id] || []).length;
+    const done = total > 0 && rep >= total;
+    etat[a.id] = { total, rep, done, frac: total ? rep / total : 0 };
+  });
+
+  CONFIG.axes.forEach((a, i) => {
+    const e = etat[a.id];
+    const disc = document.querySelector(`.cn-node-disc[data-i="${i}"]`);
+    const prog = document.querySelector(`.cn-node-prog[data-i="${i}"]`);
+    const ico  = document.querySelector(`.cn-ico[data-i="${i}"]`);
+    const pulse= document.querySelector(`.cn-pulse[data-i="${i}"]`);
+    const estCourant = a.id === currentAxe;
+
+    if (e.done) {
+      disc.setAttribute('fill', a.couleur);
+      ico.setAttribute('stroke', '#ffffff');
+      prog.setAttribute('stroke-dashoffset', 0);
+      prog.setAttribute('stroke', a.couleur);
+    } else if (estCourant) {
+      disc.setAttribute('fill', '#ffffff');
+      ico.setAttribute('stroke', a.couleur);
+      prog.setAttribute('stroke', '#F3BA00');
+      prog.setAttribute('stroke-dashoffset', CN_CIRC * (1 - e.frac));
+    } else {
+      disc.setAttribute('fill', '#E8EEF6');
+      ico.setAttribute('stroke', '#9BA8BD');
+      prog.setAttribute('stroke-dashoffset', CN_CIRC);
+    }
+    pulse.style.animation = estCourant ? 'cnpulse 1.8s ease-in-out infinite' : 'none';
+    pulse.setAttribute('opacity', estCourant ? '' : '0');
+  });
+
+  CN_EDGES.forEach(([a, b]) => {
+    const la = CONFIG.axes[a].id, lb = CONFIG.axes[b].id;
+    const allume = etat[la].done && (etat[lb].done || lb === currentAxe);
+    const el = document.querySelector(`.cn-edge[data-edge="${a}-${b}"]`);
+    if (el) el.classList.toggle('on', allume);
+  });
+
+  const cap = $('cn-cap');
+  if (currentAxe) {
+    cap.innerHTML = `Vous explorez · <b>${axeById(currentAxe).label}</b>`;
+  } else {
+    cap.innerHTML = `Constellation complète`;
+  }
+}
+
+/* ---------- quiz ---------- */
+function afficherQuestion() {
+  if (state.pos >= state.queue.length) { afficherResultats(); return; }
+  const item = state.queue[state.pos];
+  const axe = axeById(item.axe);
+  const q = axe.questions[item.qi];
+
+  $('q-axe').innerHTML = `<span class="pic">${svgIco(axe.ic)}</span>${axe.label}`;
+  $('q-texte').textContent = q.t;
+  majConstellation();
+
+  const zone = $('q-options');
+  zone.innerHTML = '';
+  q.o.forEach((opt, idx) => {
+    const [txt, ic] = opt;
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.setAttribute('tabindex', '0');
+    div.setAttribute('role', 'button');
+    div.innerHTML = `<span class="pic">${svgIco(ic)}</span><span class="lib">${txt}</span>`;
+    const choisir = () => repondre(item, idx + 1);
+    div.addEventListener('click', choisir);
+    div.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); choisir(); } });
+    zone.appendChild(div);
+  });
+
+  const carte = $('carte-question');
+  carte.classList.remove('fade'); void carte.offsetWidth; carte.classList.add('fade');
+}
+
+function repondre(item, niveau) {
+  (state.reponses[item.axe] = state.reponses[item.axe] || []).push(niveau);
+  /* Adaptatif : question-porte (qi 0) répondue au niveau 1 → on saute le reste de l'axe */
+  if (item.qi === 0 && niveau === 1) {
+    state.queue = state.queue.filter((x, i) => i <= state.pos || x.axe !== item.axe);
+  }
+  state.pos++;
+  afficherQuestion();
+}
+
+/* ================================================================
+   SCORING
+   ================================================================ */
+function calculerScores() {
+  const scores = {};
+  CONFIG.axes.forEach(a => {
+    const reps = state.reponses[a.id] || [1];
+    const moy = reps.reduce((s, v) => s + v, 0) / reps.length;
+    scores[a.id] = Math.round((moy - 1) / 3 * 100); // niveau 1→0, 4→100
+  });
+  const totalPoids = CONFIG.axes.reduce((s, a) => s + a.weight, 0);
+  const global = Math.round(CONFIG.axes.reduce((s, a) => s + scores[a.id] * a.weight, 0) / totalPoids);
+  return { scores, global };
+}
+
+function trouverPersona(global) {
+  return [...CONFIG.personas].reverse().find(p => global >= p.min);
+}
+
+function choisirRecos(scores) {
+  const prioritaires = [...CONFIG.axes]
+    .filter(a => scores[a.id] < 75)
+    .sort((a, b) => (scores[a.id] - scores[b.id]) || (b.weight - a.weight))
+    .slice(0, 3);
+  if (prioritaires.length === 0) return [{ axe: null, offre: CONFIG.offreEclaireur }];
+  return prioritaires.map(a => ({
+    axe: a,
+    offre: CONFIG.offres[a.id][scores[a.id] < 50 ? 0 : 1]
+  }));
+}
+
+/* ================================================================
+   RÉSULTATS
+   ================================================================ */
+function afficherResultats() {
+  const { scores, global } = calculerScores();
+  const persona = trouverPersona(global);
+  const recos = choisirRecos(scores);
+
+  $('screen-quiz').classList.add('hidden');
+  $('screen-result').classList.remove('hidden');
+  window.scrollTo({ top: 0 });
+
+  $('res-persona').textContent = persona.nom;
+  $('res-persona-desc').textContent = persona.desc;
+
+  setTimeout(() => {
+    $('res-thermo-fill').style.width = global + '%';
+    $('res-thermo-val').style.left = global + '%';
+    $('res-thermo-val').textContent = global + ' / 100';
+  }, 80);
+
+  $('res-radar').innerHTML = construireRadar(scores);
+
+  const zone = $('res-axes');
+  zone.innerHTML = '';
+  CONFIG.axes.forEach(a => {
+    const s = scores[a.id];
+    zone.insertAdjacentHTML('beforeend', `
+      <div class="axe-ligne">
+        <div class="ico-axe" style="color:${a.couleur}">${svgIco(a.ic)}</div>
+        <div class="nom">${a.label}${a.weight > 1 ? ' <small>compte double</small>' : ''}</div>
+        <div class="mini-rail"><div class="mini-fill" style="width:${s}%; background:${a.couleur};"></div></div>
+        <div class="val">${s}</div>
+      </div>`);
+  });
+
+  const rz = $('res-recos');
+  rz.innerHTML = '';
+  recos.forEach((r, i) => {
+    const lien = r.offre.code
+      ? `<a class="lien" href="${STATIONC(r.offre.code)}" target="_blank" rel="noopener">Voir sur Station C → <span style="font-weight:300;">${r.offre.code}</span></a>`
+      : '';
+    rz.insertAdjacentHTML('beforeend', `
+      <div class="reco">
+        <span class="tag">Priorité ${i + 1}${r.axe ? ' · ' + r.axe.label : ''}</span>
+        <h3>${r.offre.nom}</h3>
+        <p>${r.offre.desc}</p>
+        <div class="meta">${r.offre.meta}</div>
+        ${lien}
+      </div>`);
+  });
+
+  state.resultat = {
+    version: CONFIG.version,
+    outil: "Barometre Numerique FAN",
+    date: new Date().toISOString().slice(0, 10),
+    territoire: state.meta.territoire,
+    entite: state.meta.entite,
+    metier: state.meta.metier,
+    scores, global,
+    persona: persona.nom,
+    recos: recos.map(r => r.offre.nom + (r.offre.code ? ` (${r.offre.code})` : "")),
+    nbQuestions: state.queue.length
+  };
+}
+
+/* ---------- radar SVG 6 axes ---------- */
+function construireRadar(scores) {
+  const cx = 170, cy = 160, R = 110, n = CONFIG.axes.length;
+  const pt = (i, r) => {
+    const ang = -Math.PI / 2 + i * 2 * Math.PI / n;
+    return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)];
+  };
+  const poly = r => Array.from({ length: n }, (_, i) => pt(i, r).map(v => v.toFixed(1)).join(',')).join(' ');
+
+  const grille = `<polygon points="${poly(R)}" fill="#E8EEF6"/>` +
+    [0.33, 0.66].map(f => `<polygon points="${poly(R * f)}" fill="none" stroke="#ffffff" stroke-width="1.5"/>`).join('');
+
+  let rayons = '';
+  for (let i = 0; i < n; i++) {
+    const [x, y] = pt(i, R);
+    rayons += `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#ffffff" stroke-width="1.5"/>`;
+  }
+
+  const valeurs = CONFIG.axes.map((a, i) => pt(i, R * Math.max(scores[a.id], 4) / 100));
+  const polyVal = valeurs.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ');
+  const points = valeurs.map((p, i) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4.5" fill="${CONFIG.axes[i].couleur}"/>`).join('');
+
+  const labels = CONFIG.axes.map((a, i) => {
+    const [x, y] = pt(i, R + 26);
+    let anchor = 'middle';
+    if (x > cx + 10) anchor = 'start';
+    if (x < cx - 10) anchor = 'end';
+    return `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="${anchor}" font-size="12.5" font-weight="500" fill="#1E173C" font-family="Avenir,sans-serif">${a.court} · ${scores[a.id]}</text>`;
+  }).join('');
+
+  return `<svg viewBox="0 0 340 320" width="340" height="320" role="img" aria-label="Radar de maturité numérique">
+    ${grille}${rayons}
+    <polygon points="${polyVal}" fill="rgba(0,32,91,.18)" stroke="#00205B" stroke-width="2.5" stroke-linejoin="round"/>
+    ${points}${labels}
+  </svg>`;
+}
+
+/* ---------- CTA : contacter le Chargé d'Adoption (mail pré-rempli) ---------- */
+const TERRITOIRES = { BZH: "Bretagne", PDL: "Pays de la Loire", CVDL: "Centre-Val de Loire", AUTRE: "Autre" };
+
+function construireMailto() {
+  const R = state.resultat;
+  const terr = TERRITOIRES[R.territoire] || "non précisé";
+  const prenom = CONFIG.contact.nom.split(' ')[0];
+  const axesTxt = CONFIG.axes.map(a => `  - ${a.label} : ${R.scores[a.id]}/100`).join("\n");
+  const recosTxt = R.recos.map((c, i) => `  ${i + 1}. ${c}`).join("\n");
+
+  const sujet = `Baromètre Numérique FAN — ${terr} — profil ${R.persona}`;
+  const corps =
+`Bonjour ${prenom},
+
+Je viens de réaliser le Baromètre Numérique FAN et j'aimerais échanger sur mes prochains pas (formations, atelier IAGEN, accompagnement sur le terrain).
+
+Mon profil : ${R.persona} — ${R.global}/100
+Territoire : ${terr}${R.entite ? " · " + R.entite : ""}
+Métier : ${R.metier || "non précisé"}
+
+Mes scores par dimension :
+${axesTxt}
+
+Mes 3 prochains pas suggérés :
+${recosTxt}
+
+Quand seriez-vous disponible pour en parler ?
+
+Merci !`;
+
+  return `mailto:${CONFIG.contact.email}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
+}
+
+$('btn-mail').addEventListener('click', () => {
+  if (!state || !state.resultat) return;
+  window.location.href = construireMailto();
+});
+
+$('btn-restart').addEventListener('click', () => {
+  $('screen-result').classList.add('hidden');
+  $('screen-intro').classList.remove('hidden');
+  window.scrollTo({ top: 0 });
+});
+</script>
+</body>
+</html>

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -66,6 +67,29 @@ em.serif { font-style:italic; font-weight:500; font-family:var(--serif); color:v
 .modal p { font-size:15px; color:var(--txt-2); line-height:1.6; }
 .modal-close { position:absolute; top:16px; right:16px; width:34px; height:34px; border:none; border-radius:50%; background:var(--fond); color:var(--txt-2); font-size:22px; line-height:1; cursor:pointer; transition:background .15s; }
 .modal-close:hover { background:var(--fond-2); }
+
+/* ===== POPUP RÉSULTAT ===== */
+.modal-result::before { background:var(--or); }
+.modal-result .modal-eyebrow { color:#8a6a00; }
+.pop-persona { font-weight:900; font-size:30px; line-height:1.05; letter-spacing:-0.02em; color:var(--nuit); margin-bottom:8px; }
+.pop-persona em { font-style:italic; font-weight:500; font-family:var(--serif); color:var(--or); }
+.pop-desc { font-size:15px; color:var(--txt-2); line-height:1.55; }
+.pop-score { display:flex; align-items:center; gap:18px; margin:22px 0; }
+.pop-score-num { font-weight:900; font-size:46px; line-height:1; letter-spacing:-0.03em; color:var(--nuit); white-space:nowrap; }
+.pop-score-num small { font-size:18px; font-weight:700; color:var(--txt-3); }
+.pop-bar { flex:1; height:12px; border-radius:99px; background:var(--fond-2); overflow:hidden; }
+.pop-bar-fill { height:100%; width:0%; border-radius:99px; background:linear-gradient(90deg,var(--ciel),var(--or)); transition:width .9s ease; }
+.pop-points { display:grid; gap:10px; margin-bottom:22px; }
+.pop-point { display:flex; align-items:center; gap:12px; background:var(--fond); border-radius:9px; padding:12px 14px; font-size:14.5px; color:var(--txt-2); }
+.pop-point b { color:var(--nuit-2); font-weight:700; }
+.pop-point .pp-ico { flex:none; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+.pop-point .pp-ico svg { width:18px; height:18px; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.pop-point .pp-ico.fort { background:#E6F7F3; } .pop-point .pp-ico.fort svg { stroke:var(--teal); }
+.pop-point .pp-ico.lev  { background:var(--bleu-light); } .pop-point .pp-ico.lev svg { stroke:var(--cobalt); }
+.pop-note { font-size:12.5px; color:var(--txt-3); line-height:1.5; margin-top:12px; text-align:center; }
+.pop-link { display:block; margin:14px auto 0; background:none; border:none; color:var(--txt-3); font-family:var(--font); font-size:13px; font-weight:500; cursor:pointer; text-decoration:underline; }
+.pop-link:hover { color:var(--nuit); }
+.btn-block { width:100%; }
 
 /* ---------- structure ---------- */
 .wrap { max-width:740px; margin:0 auto; padding:0 20px 80px; }
@@ -300,17 +324,9 @@ footer { text-align:center; margin-top:50px; font-size:12.5px; color:var(--txt-3
     </div>
 
     <div class="carte">
-      <span class="eyebrow">Profil détaillé</span>
+      <span class="eyebrow">Profil visuel</span>
       <h2>Votre <em>radar</em></h2>
       <div class="radar-zone" id="res-radar"></div>
-      <div class="axes-detail" id="res-axes"></div>
-    </div>
-
-    <div class="carte">
-      <span class="eyebrow">Recommandations · Catalogue Station C</span>
-      <h2>Vos 3 <em>prochains pas</em></h2>
-      <p style="margin-top:8px; color:var(--txt-2); font-size:15px;">Des formations du catalogue Station C, choisies là où vous gagnerez le plus. L'IA compte double.</p>
-      <div id="res-recos"></div>
     </div>
 
     <div class="carte">
@@ -326,7 +342,7 @@ footer { text-align:center; margin-top:50px; font-size:12.5px; color:var(--txt-3
 
   </section>
 
-  <footer>Baromètre Numérique FAN · e.SNCF Solutions — Usage interne SNCF (C1) · v1.4 · Vos réponses ne quittent pas votre navigateur.</footer>
+  <footer>Baromètre Numérique FAN · e.SNCF Solutions — Usage interne SNCF (C1) · v1.5 · Vos réponses ne quittent pas votre navigateur.</footer>
 </div>
 
 <!-- ================= MODALE À PROPOS ================= -->
@@ -347,6 +363,27 @@ footer { text-align:center; margin-top:50px; font-size:12.5px; color:var(--txt-3
 
     <h3>Et mes données&nbsp;?</h3>
     <p>Vos réponses ne quittent pas votre navigateur. Rien n'est envoyé ni stocké automatiquement (usage interne SNCF — niveau C1).</p>
+  </div>
+</div>
+
+<!-- ================= POPUP RÉSULTAT ================= -->
+<div class="modal-overlay hidden" id="result-modal" role="dialog" aria-modal="true" aria-label="Votre profil numérique">
+  <div class="modal modal-result">
+    <button class="modal-close" id="btn-result-close" aria-label="Fermer">&times;</button>
+    <div class="modal-eyebrow">Votre profil numérique</div>
+    <div class="pop-persona" id="pop-persona"></div>
+    <p class="pop-desc" id="pop-desc"></p>
+
+    <div class="pop-score">
+      <div class="pop-score-num"><span id="pop-global">0</span><small>/100</small></div>
+      <div class="pop-bar"><div class="pop-bar-fill" id="pop-bar-fill"></div></div>
+    </div>
+
+    <div class="pop-points" id="pop-points"></div>
+
+    <button class="btn btn-or btn-block" id="btn-pop-mail">✉ Recevoir mon détail &amp; mes formations</button>
+    <p class="pop-note">Le détail dimension par dimension et vos 3 formations recommandées partent dans un mail pré-rempli pour votre Chargé d'Adoption FAN. Vous gardez la main avant l'envoi.</p>
+    <button class="pop-link" id="btn-pop-restart">↺ Refaire le test</button>
   </div>
 </div>
 
@@ -818,35 +855,6 @@ function afficherResultats() {
 
   $('res-radar').innerHTML = construireRadar(scores);
 
-  const zone = $('res-axes');
-  zone.innerHTML = '';
-  CONFIG.axes.forEach(a => {
-    const s = scores[a.id];
-    zone.insertAdjacentHTML('beforeend', `
-      <div class="axe-ligne">
-        <div class="ico-axe" style="color:${a.couleur}">${svgIco(a.ic)}</div>
-        <div class="nom">${a.label}${a.weight > 1 ? ' <small>compte double</small>' : ''}</div>
-        <div class="mini-rail"><div class="mini-fill" style="width:${s}%; background:${a.couleur};"></div></div>
-        <div class="val">${s}</div>
-      </div>`);
-  });
-
-  const rz = $('res-recos');
-  rz.innerHTML = '';
-  recos.forEach((r, i) => {
-    const lien = r.offre.code
-      ? `<a class="lien" href="${STATIONC(r.offre.code)}" target="_blank" rel="noopener">Voir sur Station C → <span style="font-weight:300;">${r.offre.code}</span></a>`
-      : '';
-    rz.insertAdjacentHTML('beforeend', `
-      <div class="reco">
-        <span class="tag">Priorité ${i + 1}${r.axe ? ' · ' + r.axe.label : ''}</span>
-        <h3>${r.offre.nom}</h3>
-        <p>${r.offre.desc}</p>
-        <div class="meta">${r.offre.meta}</div>
-        ${lien}
-      </div>`);
-  });
-
   state.resultat = {
     version: CONFIG.version,
     outil: "Barometre Numerique FAN",
@@ -859,6 +867,22 @@ function afficherResultats() {
     recos: recos.map(r => r.offre.nom + (r.offre.code ? ` (${r.offre.code})` : "")),
     nbQuestions: state.queue.length
   };
+
+  /* ---- popup résultat : profil numérique + points généraux ---- */
+  $('pop-persona').textContent = persona.nom;
+  $('pop-desc').textContent = persona.desc;
+  $('pop-global').textContent = global;
+  setTimeout(() => { $('pop-bar-fill').style.width = global + '%'; }, 120);
+
+  const axeFort = CONFIG.axes.reduce((a, b) => scores[b.id] > scores[a.id] ? b : a);
+  const levier = recos[0].axe; // null si tous les axes ≥ 75 (profil éclaireur)
+  let pts = `<div class="pop-point"><span class="pp-ico fort">${svgIco('check')}</span><div>Votre point fort · <b>${axeFort.label}</b></div></div>`;
+  pts += levier
+    ? `<div class="pop-point"><span class="pp-ico lev">${svgIco('target')}</span><div>Votre principal levier · <b>${levier.label}</b></div></div>`
+    : `<div class="pop-point"><span class="pp-ico lev">${svgIco('star')}</span><div>Profil rare — parlons rôle d'<b>ambassadeur numérique</b></div></div>`;
+  $('pop-points').innerHTML = pts;
+
+  $('result-modal').classList.remove('hidden');
 }
 
 /* ---------- radar SVG 6 axes ---------- */
@@ -936,11 +960,24 @@ $('btn-mail').addEventListener('click', () => {
   window.location.href = construireMailto();
 });
 
-$('btn-restart').addEventListener('click', () => {
+/* ---------- popup résultat : actions ---------- */
+function fermerPopup() { $('result-modal').classList.add('hidden'); }
+function retourIntro() {
+  fermerPopup();
   $('screen-result').classList.add('hidden');
   $('screen-intro').classList.remove('hidden');
   window.scrollTo({ top: 0 });
+}
+$('btn-pop-mail').addEventListener('click', () => {
+  if (state && state.resultat) window.location.href = construireMailto();
+  fermerPopup();
 });
+$('btn-result-close').addEventListener('click', fermerPopup);
+$('result-modal').addEventListener('click', e => { if (e.target === $('result-modal')) fermerPopup(); });
+$('btn-pop-restart').addEventListener('click', retourIntro);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('result-modal').classList.contains('hidden')) fermerPopup(); });
+
+$('btn-restart').addEventListener('click', retourIntro);
 </script>
 </body>
 </html>
